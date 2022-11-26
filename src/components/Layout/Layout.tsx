@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Header />
 
       <div className="h-screen bg-gray-100 pt-6">
-        <div>{children}</div>
+        <div className="w-5/12 mx-auto ">{children}</div>
       </div>
     </div>
   )

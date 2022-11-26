@@ -77,6 +77,7 @@ interface PostTile {
   profilePic: string
   topic: string
   comments: Comment[]
+  createdAt: string
 }
 
 export default function PostTile({
@@ -85,13 +86,21 @@ export default function PostTile({
   profilePic,
   topic,
   comments,
+  createdAt,
 }: PostTile) {
   return (
     <div
-      className="bg-white w-5/12 mx-auto"
+      className="bg-white p-2 rounded border-gray-200 border"
       style={{ fontFamily: 'Roboto Slab' }}
     >
-      <div className="ml-4">t/{topic}</div>
+      <div className="flex justify-between mx-4">
+        <div>t/{topic}</div>
+        <div className="text-gray-400 text-sm">
+          {`${new Date(createdAt).toLocaleDateString()}, ${new Date(
+            createdAt
+          ).toLocaleTimeString()}`}
+        </div>
+      </div>
       <div className="text-lg font-sans text-center">{text}</div>
       <div className="flex mt-4 items-center justify-center">
         <Image src={profilePic} alt="" width={30} height={30} />

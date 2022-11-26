@@ -26,6 +26,7 @@ export default function Home(props: Props) {
             username={post.user.username}
             topic={post.topic.title}
             comments={post.comments}
+            createdAt={post.createdAt}
           />
         </div>
       ))}

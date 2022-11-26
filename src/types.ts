@@ -6,6 +6,7 @@ export interface Post {
   topic: Topic
   comments: Comment[] | []
   username: string
+  createdAt: string
 }
 
 export interface Topic {
