@@ -1,6 +1,8 @@
 import '../../styles/globals.css'
 
 import type { AppProps } from 'next/app'
+import { UserProvider } from '@auth0/nextjs-auth0'
+
 import {
   QueryClient,
   QueryClientProvider,
@@ -13,10 +15,12 @@ const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
-    </QueryClientProvider>
+    <UserProvider>
+      <QueryClientProvider client={queryClient}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </QueryClientProvider>{' '}
+    </UserProvider>
   )
 }

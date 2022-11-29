@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id          String    @id @default(uuid())
+  name        String?   @db.VarChar(255)
+  username    String?    @unique @db.VarChar(30)
+  email       String?    @unique
+  profile_pic String?   @default("https://res.cloudinary.com/dt3hgdbp9/image/upload/v1669174174/blank-profile-picture-973460_1280_sbmtr8.webp")
+  posts       Post[]
+  comments    Comment[]
+}
+
+
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String
+}
+
+model Post {
+  id        String    @id @default(uuid())
+  text      String    @db.VarChar(255)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  comments  Comment[]
+  topic     Topic     @relation(fields: [topicId], references: [id])
+  topicId   String
+}
+
+model Topic {
+  id    String @id @default(uuid())
+  title String @unique @db.VarChar(20)
+  posts Post[]
+}

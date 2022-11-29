@@ -1,7 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { useUser } from '@auth0/nextjs-auth0'
 
 export default function Header() {
+  const { user, error, isLoading } = useUser()
+
+  const userLoggedIn = user !== undefined
+
+  console.log({ user })
+
   return (
     <header className="h-12 flex items-center mx-10">
       <h1 className="font-sans mr-auto text-2xl ">
@@ -18,23 +25,24 @@ export default function Header() {
         </Link>
       </h1>
       <ul className="flex h-full items-center list-none ">
-        <li>
-          <Link
-            href="/signup"
-            className="rounded-full text-blue-600 px-8 py-1 border-blue-600 border-solid border-2"
-          >
-            Sign Up
-          </Link>
+        <li className="ml-6">
+          {userLoggedIn && (
+            <Link
+              href="/newpost"
+              className="rounded-full bg-blue-600 text-white px-8 py-1"
+            >
+              Create Post
+            </Link>
+          )}
         </li>
         <li className="ml-6">
           <Link
-            href="/signin"
+            href={userLoggedIn ? '/api/auth/logout' : '/api/auth/login'}
             className="rounded-full bg-blue-600 text-white px-8 py-1"
           >
-            Login
+            {userLoggedIn ? 'Logout' : 'Login'}
           </Link>
         </li>
-        <li></li>
       </ul>
     </header>
   )
