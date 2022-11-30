@@ -113,7 +113,7 @@ export default function Home() {
   return (
     <div className="mx-auto">
       {userLoggedIn && (
-        <div className="flex my-4 justify-center">
+        <div className="flex my-4 justify-center bg-white p-5 rounded-lg border-gray-200 border">
           <Image
             src={user.picture as string}
             width={50}

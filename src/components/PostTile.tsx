@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Post, Comment } from '../types'
 
-type ActionLabelType = 'comment' | 'save'
+type ActionLabelType = 'comment' | 'like'
 
 interface Action {
   iconPath: string
@@ -12,33 +12,24 @@ interface Action {
   type: ActionLabelType
 }
 
-interface Actions {
-  numOfComments: number
-}
-
 const actions: Action[] = [
+  {
+    type: 'like',
+    iconPath: 'thumbs-up-outline.svg',
+    iconWidth: 18,
+    iconHeight: 18,
+    label: 'Like',
+    alt: 'Like',
+  },
   {
     type: 'comment',
     iconPath: 'comment.svg',
-    iconWidth: 14,
-    iconHeight: 14,
+    iconWidth: 18,
+    iconHeight: 18,
     alt: 'Comments',
-  },
-  {
-    type: 'save',
-    iconPath: 'bookmark-outline.svg',
-    iconWidth: 10,
-    iconHeight: 10,
-    label: 'Save',
-    alt: 'Save',
+    label: 'Comment',
   },
 ]
-
-function getActionLabel(type: ActionLabelType, props: Actions) {
-  if (type === 'comment' && 'numOfComments' in props) {
-    return `${props.numOfComments} comments`
-  }
-}
 
 function Action({ iconPath, alt, iconWidth, iconHeight, label }: Action) {
   return (
@@ -51,21 +42,16 @@ function Action({ iconPath, alt, iconWidth, iconHeight, label }: Action) {
           alt={alt}
         />
       </span>
-      <span className="ml-2">
-        <span>{label}</span>
-      </span>
+      <span className="ml-2">{label && <span>{label}</span>}</span>
     </button>
   )
 }
 
-function Actions(props: Actions) {
+function Actions({ actions }: { actions: Action[] }) {
   return (
     <div className="flex justify-evenly">
       {actions.map((action) => {
-        const label = action.label
-          ? action.label
-          : getActionLabel(action.type, props)
-        return <Action key={action.type} {...action} label={label} />
+        return <Action key={action.type} {...action} />
       })}
     </div>
   )
@@ -90,10 +76,10 @@ export default function PostTile({
 }: PostTile) {
   return (
     <div
-      className="bg-white p-2 rounded border-gray-200 border"
+      className="bg-white px-6 py-2 rounded-lg border-gray-200 border"
       style={{ fontFamily: 'Roboto Slab' }}
     >
-      <div className="flex justify-between mx-4">
+      <div className="flex justify-between ">
         <div>t/{topic}</div>
         <div className="text-gray-400 text-sm">
           {`${new Date(createdAt).toLocaleDateString()}, ${new Date(
@@ -106,8 +92,11 @@ export default function PostTile({
         <Image src={profilePic} alt="" width={30} height={30} />
         <span className="ml-3">u/{username}</span>
       </div>
-      <div className="py-2">
-        <Actions numOfComments={comments?.length} />
+      <div className="flex justify-end">
+        <div>{`${comments.length} comments`}</div>
+      </div>
+      <div className="mt-4 py-3 border-t border-b border-gray-300">
+        <Actions actions={actions} />
       </div>
     </div>
   )
