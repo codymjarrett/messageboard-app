@@ -2,25 +2,24 @@ import '../../styles/globals.css'
 
 import type { AppProps } from 'next/app'
 import { UserProvider } from '@auth0/nextjs-auth0'
+import { ChakraProvider } from '@chakra-ui/react'
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+
+import queryClient from '../queryClient'
 
 import Layout from '../components/Layout/Layout'
-
-const queryClient = new QueryClient()
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <QueryClientProvider client={queryClient}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </QueryClientProvider>{' '}
+        <ChakraProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </ChakraProvider>
+      </QueryClientProvider>
     </UserProvider>
   )
 }

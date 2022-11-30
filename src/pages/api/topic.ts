@@ -1,12 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { withApiAuthRequired, getSession } from '@auth0/nextjs-auth0'
 
 import prisma from '../../../db'
 
-export default async function topicHandler(
+export default withApiAuthRequired(async function topicHandler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { method } = req
+
+  const session = getSession(req, res)
+
+  const userId = session?.user.sub
+
+  console.log({ userId })
 
   switch (method) {
     case 'GET': {
@@ -25,4 +32,4 @@ export default async function topicHandler(
       res.json({ success: true, data: createdTopic })
     }
   }
-}
+})

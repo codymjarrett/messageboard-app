@@ -4,13 +4,12 @@ import { useUser } from '@auth0/nextjs-auth0'
 
 export default function Header() {
   const { user, error, isLoading } = useUser()
+  // useHandleCreateNewUser()
 
   const userLoggedIn = user !== undefined
 
-  console.log({ user })
-
   return (
-    <header className="h-12 flex items-center mx-10">
+    <header className="h-12 flex items-center px-10 bg-white">
       <h1 className="font-sans mr-auto text-2xl ">
         <Link href="/">
           <div className="flex items-center">
@@ -25,16 +24,6 @@ export default function Header() {
         </Link>
       </h1>
       <ul className="flex h-full items-center list-none ">
-        <li className="ml-6">
-          {userLoggedIn && (
-            <Link
-              href="/newpost"
-              className="rounded-full bg-blue-600 text-white px-8 py-1"
-            >
-              Create Post
-            </Link>
-          )}
-        </li>
         <li className="ml-6">
           <Link
             href={userLoggedIn ? '/api/auth/logout' : '/api/auth/login'}
