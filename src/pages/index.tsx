@@ -65,7 +65,7 @@ export default function Home() {
 
   const buttonMessage = `What's on your mind, ${user?.nickname || ''}?`
 
-  const { data } = useQuery({
+  const { data, isLoading: queryIsLoading } = useQuery({
     queryKey: ['posts'],
     queryFn: async () => {
       const { data } = await axios.get('/api/post')
@@ -104,7 +104,7 @@ export default function Home() {
     },
   })
 
-  if (userIsLoading) {
+  if (userIsLoading || queryIsLoading) {
     return <div>Loading...</div>
   }
 
