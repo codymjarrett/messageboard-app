@@ -23,6 +23,12 @@ export interface Comment {
   userId: string
 }
 
+export interface Likes {
+  userId: string
+  postId?: string
+  commentId?: string
+}
+
 export interface User {
   email: string
   id: string

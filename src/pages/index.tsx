@@ -63,7 +63,7 @@ export default function Home() {
 
   const userLoggedIn = user !== undefined
 
-  const buttonMessage = `What's on your mind, ${user?.nickname || ''}?`
+  const buttonMessage = `Post dat', ${user?.nickname || ''}!`
 
   const { data, isLoading: queryIsLoading } = useQuery({
     queryKey: ['posts'],
@@ -142,6 +142,7 @@ export default function Home() {
                 topic={post.topic.title}
                 comments={post.comments}
                 createdAt={post.createdAt}
+                likes={post.likes}
               />
             </div>
           ))}

@@ -15,6 +15,7 @@ export default async function postHandler(
           user: true,
           topic: true,
           comments: true,
+          likes: true,
         },
       })
       res.json({ success: true, data: posts })
