@@ -1,13 +1,12 @@
 import React, { useRef, useState } from 'react'
 import Image from 'next/image'
-import { Post, Comment as CommentType, Like } from '../types'
+import { Comment as CommentType, Like } from '../types'
 import { Divider, Textarea, Button } from '@chakra-ui/react'
 import { useUser } from '@auth0/nextjs-auth0'
 import axios from 'axios'
 
 import Comment from './Comment'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import queryClient from '../queryClient'
+import { useMutation } from '@tanstack/react-query'
 
 type ActionLabelType = 'comment' | 'like'
 
@@ -43,18 +42,10 @@ async function createComment({
   text,
   sub,
   postId,
-  nickname,
-  email,
-  name,
-  picture,
 }: {
   text: string
   sub: string
   postId: string
-  nickname: string
-  email: string
-  name: string
-  picture: string
 }) {
   const response = await axios.post(`/api/comment/?postId=${postId}`, {
     text,
@@ -64,14 +55,6 @@ async function createComment({
   return response.data
 }
 
-const likeAction = {
-  type: 'like' as ActionLabelType,
-  iconPath: 'thumbs-up-outline.svg',
-  iconWidth: 18,
-  iconHeight: 18,
-  label: 'Like',
-  alt: 'Like',
-}
 const commentAction = {
   type: 'comment' as ActionLabelType,
   iconPath: 'comment.svg',
@@ -140,10 +123,6 @@ export default function PostTile({
         text: comment,
         sub: user?.sub as string,
         postId,
-        nickname: user?.nickname as string,
-        email: user?.email as string,
-        name: user?.name as string,
-        picture: user?.picture as string,
       })
     }
   }
@@ -169,7 +148,7 @@ export default function PostTile({
         <span className="ml-3">u/{username}</span>
       </div>
       <div className="flex justify-between">
-        {hasComments && <div>{`${comments?.length} comments`}</div>}
+        {<div>{`${hasComments ? comments?.length : 0} comments`}</div>}
       </div>
       <div className="mt-4">
         <Divider />

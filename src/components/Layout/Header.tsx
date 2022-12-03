@@ -4,7 +4,6 @@ import { useUser } from '@auth0/nextjs-auth0'
 
 export default function Header() {
   const { user, error, isLoading } = useUser()
-  // useHandleCreateNewUser()
 
   const userLoggedIn = user !== undefined
 
