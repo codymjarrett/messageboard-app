@@ -1,8 +1,13 @@
-import { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Image from 'next/image'
-import { Post, Comment, Likes } from '../types'
-import { Textarea, Button } from '@chakra-ui/react'
+import { Post, Comment as CommentType, Like } from '../types'
+import { Divider, Textarea, Button } from '@chakra-ui/react'
 import { useUser } from '@auth0/nextjs-auth0'
+import axios from 'axios'
+
+import Comment from './Comment'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import queryClient from '../queryClient'
 
 type ActionLabelType = 'comment' | 'like'
 
@@ -15,6 +20,48 @@ interface Action {
   type: ActionLabelType
   disabled?: boolean
   onClick: () => void
+}
+interface PostTile {
+  text: string
+  username: string
+  profilePic: string
+  topic: string
+  comments: CommentType[]
+  likes: Like[]
+  createdAt: string
+  postId: string
+  refetchPosts: () => void
+}
+
+interface LikeVariables {
+  sub: string
+  postId?: string
+  commentId?: string
+}
+
+async function createComment({
+  text,
+  sub,
+  postId,
+  nickname,
+  email,
+  name,
+  picture,
+}: {
+  text: string
+  sub: string
+  postId: string
+  nickname: string
+  email: string
+  name: string
+  picture: string
+}) {
+  const response = await axios.post(`/api/comment/?postId=${postId}`, {
+    text,
+    sub,
+  })
+
+  return response.data
 }
 
 const likeAction = {
@@ -60,33 +107,52 @@ function Action({
   )
 }
 
-interface PostTile {
-  text: string
-  username: string
-  profilePic: string
-  topic: string
-  comments: Comment[]
-  likes: Likes[]
-  createdAt: string
-}
-
 export default function PostTile({
   text,
   username,
   profilePic,
   topic,
-  likes,
   comments,
   createdAt,
+  postId,
+  refetchPosts,
 }: PostTile) {
   const { user, error, isLoading: userIsLoading } = useUser()
   const userLoggedIn = user !== undefined
 
-  const commentInputRef = useRef(null)
+  const commentTextareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const [comment, setComment] = useState('')
+
+  const { mutate: createCommentMutation, isLoading: commentIsLoading } =
+    useMutation({
+      mutationFn: createComment,
+      onSettled: () => refetchPosts(),
+    })
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (!comment) return
+
+    if (event.key === 'Enter') {
+      setComment('')
+      commentTextareaRef?.current?.blur()
+      return createCommentMutation({
+        text: comment,
+        sub: user?.sub as string,
+        postId,
+        nickname: user?.nickname as string,
+        email: user?.email as string,
+        name: user?.name as string,
+        picture: user?.picture as string,
+      })
+    }
+  }
+
+  const hasComments = !!comments?.length
 
   return (
     <div
-      className="bg-white px-6 py-2 rounded-lg border-gray-200 border"
+      className="bg-white px-6 pt-2 pb-6 rounded-lg border-gray-200 border"
       style={{ fontFamily: 'Roboto Slab' }}
     >
       <div className="flex justify-between ">
@@ -103,34 +169,54 @@ export default function PostTile({
         <span className="ml-3">u/{username}</span>
       </div>
       <div className="flex justify-between">
-        <div>{`${likes.length} likes`}</div>
-        <div>{`${comments.length} comments`}</div>
+        {hasComments && <div>{`${comments?.length} comments`}</div>}
       </div>
-      <div className="border-t border-b border-gray-300 mt-4">
-        <div className="flex justify-evenly">
-          <Action {...likeAction} />
+      <div className="mt-4">
+        <Divider />
+        <div className="flex justify-center">
           <Action
             {...commentAction}
             disabled={!userLoggedIn}
-            onClick={() => commentInputRef?.current?.focus()}
+            onClick={() => commentTextareaRef?.current?.focus()}
           />
         </div>
+        <Divider />
+      </div>
+      <div>
+        {hasComments &&
+          comments?.map((comment) => {
+            return (
+              <Comment
+                id={comment.id}
+                text={comment.text}
+                user={comment.user}
+                key={comment.id}
+              />
+            )
+          })}
       </div>
       {userLoggedIn && (
         <div className="mt-4 flex items-center">
-          <Image
-            src={user?.picture as string}
-            width={50}
-            height={50}
-            className="rounded-full"
-            alt="profile image"
-          />
+          <div>
+            <Image
+              src={user?.picture as string}
+              width={40}
+              height={40}
+              className="rounded-full"
+              alt="profile image"
+            />
+          </div>
           <div className="ml-4 w-full">
             <Textarea
               placeholder="Comment on dat' post..."
               resize="none"
               variant="filled"
-              ref={commentInputRef}
+              ref={commentTextareaRef}
+              onKeyDown={handleKeyDown}
+              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setComment(event.currentTarget.value)
+              }
+              value={comment}
             />
           </div>
         </div>

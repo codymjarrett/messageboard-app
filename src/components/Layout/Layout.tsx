@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Header />
 
       <div className="pt-6">
-        <div className="w-5/12 mx-auto mb-10">{children}</div>
+        <div className="mx-auto mb-10 max-w-screen-md">{children}</div>
       </div>
     </div>
   )

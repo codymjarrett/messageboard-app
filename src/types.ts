@@ -5,6 +5,7 @@ export interface Post {
   user: User
   topic: Topic
   comments: Comment[] | []
+  likes: Like[] | []
   username: string
   createdAt: string
 }
@@ -14,6 +15,15 @@ export interface Topic {
   title: string
 }
 
+export interface User {
+  email: string
+  id: string
+  name: string
+  profile_pic: string
+  sub: string
+  username: string
+}
+
 export interface Comment {
   createdAt: string
   id: string
@@ -21,9 +31,10 @@ export interface Comment {
   text: string
   updatedAt: string
   userId: string
+  user: User
 }
 
-export interface Likes {
+export interface Like {
   userId: string
   postId?: string
   commentId?: string

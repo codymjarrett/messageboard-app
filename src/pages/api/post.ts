@@ -14,16 +14,24 @@ export default async function postHandler(
         include: {
           user: true,
           topic: true,
-          comments: true,
-          likes: true,
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
         },
       })
+
       res.json({ success: true, data: posts })
+      break
     }
     case 'POST': {
-      console.log('made it here')
       /* check if user is in DB first, if not, create user. Then proceed to create post.*/
-      const { text, topicId, name, picture, email, sub, nickname } = req.body
+      const { text, topicId, name, picture, email, sub, nickname, topic } =
+        req.body
 
       try {
         // check if user is in DB
@@ -46,19 +54,36 @@ export default async function postHandler(
               },
             })
 
-        // create post
-        const createdPost = await prisma.post.create({
-          data: {
-            text,
-            userId: user?.id,
-            topicId,
-          },
-        })
+        try {
+          let _topicId = ''
 
-        res.json({ success: true, data: createdPost })
+          if (!topicId) {
+            const newTopic = await prisma.topic.create({
+              data: {
+                title: topic,
+              },
+            })
+            _topicId = newTopic?.id
+          } else {
+            _topicId = topicId
+          }
+
+          // create post
+          const createdPost = await prisma.post.create({
+            data: {
+              text,
+              userId: user?.id,
+              topicId: _topicId,
+            },
+          })
+          res.json({ success: true, data: createdPost })
+        } catch (error) {
+          console.log(error)
+        }
       } catch (error) {
         console.log(error)
       }
+      break
     }
   }
 }

@@ -19,7 +19,6 @@ model User {
   sub         String    @unique
   posts       Post[]
   comments    Comment[]
-  Likes       Likes[]
 }
 
 model Comment {
@@ -31,7 +30,6 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id])
   post      Post     @relation(fields: [postId], references: [id])
   postId    String
-  likes     Likes[]
 }
 
 model Post {
@@ -44,18 +42,17 @@ model Post {
   comments  Comment[]
   topic     Topic     @relation(fields: [topicId], references: [id])
   topicId   String
-  likes     Likes[]
 }
 
-model Likes {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    String
-  Comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId String?
-}
+// model Like {
+//   id        String   @id @default(uuid())
+//   userId    String
+//   user      User     @relation(fields: [userId], references: [id])
+//   post      Post?    @relation(fields: [postId], references: [id])
+//   postId    String?
+//   Comment   Comment? @relation(fields: [commentId], references: [id])
+//   commentId String?
+// }
 
 model Topic {
   id    String @id @default(uuid())

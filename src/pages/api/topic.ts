@@ -13,12 +13,11 @@ export default withApiAuthRequired(async function topicHandler(
 
   const userId = session?.user.sub
 
-  console.log({ userId })
-
   switch (method) {
     case 'GET': {
       const topics = await prisma.topic.findMany()
       res.json({ success: true, data: topics })
+      break
     }
     case 'POST': {
       const { title } = req.body
@@ -30,6 +29,7 @@ export default withApiAuthRequired(async function topicHandler(
       })
 
       res.json({ success: true, data: createdTopic })
+      break
     }
   }
 })
